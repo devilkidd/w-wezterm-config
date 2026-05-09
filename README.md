@@ -1,5 +1,8 @@
 <h2 align="center">w-wezterm-config</h2>
 
+> This project is adapted from [Kevin Silvester's wezterm-config](https://github.com/KevinSilvester/wezterm-config).  
+> Thanks to the original author for the excellent structure and ideas.
+
 <p align="center">
   <a href="https://github.com/devilkidd/w-wezterm-config/stargazers">
     <img alt="Stargazers" src="https://img.shields.io/github/stars/devilkidd/w-wezterm-config?style=for-the-badge&logo=starship&color=C9CBFF&logoColor=D9E0EE&labelColor=302D41">
@@ -18,7 +21,7 @@
 
 ### Features
 
-- [**Background Image Selector**](https://github.com/devilkidd/w-wezterm-config/blob/main/utils/backdrops.lua)
+- [**Background Image Selector**](./utils/backdrops.lua)
 
   - Cycle images
   - Fuzzy search for image
@@ -26,9 +29,9 @@
 
   > See: [key bindings](#background-images) for usage
 
-- [**GPU Adapter Selector**](https://github.com/devilkidd/w-wezterm-config/blob/main/utils/gpu_adapter.lua)
+- [**GPU Adapter Selector**](./utils/gpu_adapter.lua)
 
-  > :bulb: Only works if the [`front_end`](https://github.com/devilkidd/w-wezterm-config/blob/main/config/appearance.lua#L8) option is set to `WebGpu`.
+  > :bulb: Only works if the [`front_end`](./config/appearance.lua#L8) option is set to `WebGpu`.
 
   A small utility to select the best GPU + Adapter (graphics API) combo for your machine.
 
@@ -57,17 +60,15 @@
 
 ---
 
-### Getting Started
-
 ### Agent Quick Start
 
-1. Clone this repository.
-2. Read `README.md` and then inspect `wezterm.lua` plus `config/*` for platform-specific behavior.
-3. Apply only the platform branch needed for your OS.
-4. Keep `bindings.lua`, `launch.lua`, and `domains.lua` in sync with the README.
-5. Verify with `wezterm start --cwd .` or a normal launch after edits.
+1. Clone this repository into the target machine's WezTerm config directory.
+2. Read `README.md`, then load `wezterm.lua`, `config/*`, and `events/*`.
+3. Apply only the platform-specific branches in `launch.lua`, `domains.lua`, `fonts.lua`, and `bindings.lua`.
+4. Keep the README shortcut tables in sync with `bindings.lua`.
+5. Launch WezTerm once to verify the config loads.
 
-- #### Requirements:
+### Requirements:
 
   - <details>
       <summary><b>WezTerm</b></summary>
@@ -92,7 +93,6 @@
       - Install with Scoop (portable)
 
         ```sh
-        scoop bucket add k https://github.com/KevinSilvester/scoop-bucket
         scoop install k/wezterm
         ```
 
@@ -122,7 +122,6 @@
       - Install with Scoop (portable)
 
         ```sh
-        scoop bucket add k https://github.com/KevinSilvester/scoop-bucket
         scoop install k/wezterm-nightly
         ```
       </details>
@@ -207,10 +206,11 @@
       # On Windows and Unix systems
       git clone https://github.com/devilkidd/w-wezterm-config.git ~/.config/wezterm
       ```
-  2.  Update `launch` and `domain` related option:
-      - [./config/launch.lua](./config/launch.lua) for preferred shells and its paths
-      - [./config/domains.lua](./config/domains.lua) for custom SSH/WSL domains
-  3.  And Done!!! 🎉🎉
+  2.  Adjust platform-specific settings if needed:
+      - `config/launch.lua` for preferred shells
+      - `config/domains.lua` for custom SSH/WSL domains
+      - `config/fonts.lua` for fallback fonts
+  3.  Start WezTerm once to verify the config loads.
 
 &nbsp;
 
