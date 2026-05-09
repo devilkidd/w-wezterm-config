@@ -15,6 +15,14 @@ end
 
 local copy_mod = platform.is_mac and 'SUPER' or 'CTRL'
 
+local function hide_window(window, pane)
+   if platform.is_mac then
+      window:perform_action(act.HideApplication, pane)
+   else
+      window:perform_action(act.Hide, pane)
+   end
+end
+
 local function smart_copy_action()
    return wezterm.action_callback(function(window, pane)
       local selected = window:get_selection_text_for_pane(pane)
@@ -23,6 +31,19 @@ local function smart_copy_action()
          return
       end
       window:perform_action(act.SendKey({ key = 'c', mods = 'CTRL' }), pane)
+   end)
+end
+
+local function smart_close_action()
+   return wezterm.action_callback(function(window, pane)
+      local mux_window = window:mux_window()
+      local mux_tabs = mux_window:tabs()
+
+      if #mux_tabs <= 1 then
+         hide_window(window, pane)
+      else
+         window:perform_action(act.CloseCurrentPane({ confirm = false }), pane)
+      end
    end)
 end
 
@@ -87,7 +108,6 @@ local keys = {
    -- tabs --
    -- tabs: spawn+close
    { key = 't',          mods = mod.SUPER,     action = act.SpawnTab('DefaultDomain') },
-   { key = 't',          mods = mod.SUPER_REV, action = act.SpawnTab({ DomainName = 'wsl:ubuntu-fish' }) },
    { key = 'w',          mods = mod.SUPER_REV, action = act.CloseCurrentTab({ confirm = false }) },
 
    -- tabs: navigation
@@ -104,6 +124,16 @@ local keys = {
    { key = '9',          mods = mod.SUPER,     action = act.EmitEvent('tabs.toggle-tab-bar'), },
 
    -- window --
+   -- window: hide window (Cmd+H on macOS, Alt+H elsewhere)
+   {
+      key = 'h',
+      mods = mod.SUPER,
+      action = wezterm.action_callback(function(window, pane)
+         hide_window(window, pane)
+      end),
+   },
+   -- window: close window (Cmd+Q on macOS)
+   { key = 'q',          mods = mod.SUPER,     action = act.QuitApplication },
    -- window: spawn windows
    { key = 'n',          mods = mod.SUPER,     action = act.SpawnWindow },
 
@@ -131,7 +161,7 @@ local keys = {
 
    -- panes: zoom+close pane
    { key = 'Enter', mods = mod.SUPER,     action = act.TogglePaneZoomState },
-   { key = 'w',     mods = mod.SUPER,     action = act.CloseCurrentPane({ confirm = false }) },
+   { key = 'w',     mods = mod.SUPER,     action = smart_close_action() },
 
    -- panes: navigation
    { key = 'k',     mods = mod.SUPER_REV, action = act.ActivatePaneDirection('Up') },
@@ -198,6 +228,11 @@ local keys = {
       }),
    },
 }
+
+-- Windows: WSL tab spawn
+if platform.is_win then
+   table.insert(keys, { key = 't', mods = mod.SUPER_REV, action = act.SpawnTab({ DomainName = 'wsl:ubuntu-fish' }) })
+end
 
 -- stylua: ignore
 ---@type table<string, Key[]>
