@@ -115,10 +115,14 @@ git clone https://github.com/devilkidd/w-wezterm-config.git ~/.config/wezterm
 
 ### Copy and Paste
 
-| Keys | Action |
-| --- | --- |
-| `Ctrl+Shift+c` | Copy to clipboard |
-| `Ctrl+Shift+v` | Paste from clipboard |
+| Platform | Keys | Action |
+| --- | --- | --- |
+| macOS | `Cmd+c` | Copy to clipboard |
+| macOS | `Cmd+v` | Paste from clipboard |
+| Windows/Linux | `Ctrl+Shift+c` | Copy to clipboard |
+| Windows/Linux | `Ctrl+Shift+v` | Paste from clipboard |
+| All platforms | `Ctrl+Shift+c` | Copy to clipboard fallback |
+| All platforms | `Ctrl+Shift+v` | Paste from clipboard fallback |
 
 ### Cursor Movement
 
