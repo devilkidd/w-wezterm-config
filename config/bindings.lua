@@ -13,6 +13,31 @@ elseif platform.is_win or platform.is_linux then
    mod.SUPER_REV = 'ALT|CTRL'
 end
 
+local copy_mod = platform.is_mac and 'SUPER' or 'CTRL'
+
+local function smart_copy_action()
+   return wezterm.action_callback(function(window, pane)
+      local selected = window:get_selection_text_for_pane(pane)
+      if selected and selected ~= '' then
+         window:perform_action(act.CopyTo('Clipboard'), pane)
+         return
+      end
+      window:perform_action(act.SendKey({ key = 'c', mods = 'CTRL' }), pane)
+   end)
+end
+
+local function open_selected_url_action()
+   return wezterm.action_callback(function(window, pane)
+      local url = window:get_selection_text_for_pane(pane)
+      if not url or url == '' then
+         window:toast_notification('WezTerm', 'No URL selected', nil, 1200)
+         return
+      end
+      wezterm.log_info('opening: ' .. url)
+      wezterm.open_with(url)
+   end)
+end
+
 -- stylua: ignore
 ---@type Key[]
 local keys = {
@@ -41,11 +66,7 @@ local keys = {
             '<(https?://\\S+)>',
             '\\bhttps?://\\S+[)/a-zA-Z0-9-]+'
          },
-         action = wezterm.action_callback(function(window, pane)
-            local url = window:get_selection_text_for_pane(pane)
-            wezterm.log_info('opening: ' .. url)
-            wezterm.open_with(url)
-         end),
+         action = open_selected_url_action(),
       }),
    },
 
@@ -55,6 +76,8 @@ local keys = {
    { key = 'Backspace',  mods = mod.SUPER,     action = act.SendString('\u{15}') },
 
    -- copy/paste --
+   { key = 'c',          mods = copy_mod,      action = smart_copy_action() },
+   { key = 'v',          mods = copy_mod,      action = act.PasteFrom('Clipboard') },
    { key = 'c',          mods = 'CTRL|SHIFT',  action = act.CopyTo('Clipboard') },
    { key = 'v',          mods = 'CTRL|SHIFT',  action = act.PasteFrom('Clipboard') },
 
@@ -84,39 +107,6 @@ local keys = {
    -- window: spawn windows
    { key = 'n',          mods = mod.SUPER,     action = act.SpawnWindow },
 
-   -- window: zoom window
-   {
-      key = '-',
-      mods = mod.SUPER,
-      action = wezterm.action_callback(function(window, _pane)
-         local dimensions = window:get_dimensions()
-         -- on Windows 11 (the only OS I'm able to test this on), `is_full_screen` is always false (it's a bug).
-         -- Calling `set_inner_size` when the window is actually in fullscreen will cause the
-         -- program UI to completely freeze.
-         if platform.is_win or dimensions.is_full_screen then
-            return
-         end
-         local new_width = dimensions.pixel_width - 50
-         local new_height = dimensions.pixel_height - 50
-         window:set_inner_size(new_width, new_height)
-      end)
-   },
-   {
-      key = '=',
-      mods = mod.SUPER,
-      action = wezterm.action_callback(function(window, _pane)
-         local dimensions = window:get_dimensions()
-         -- on Windows 11 (the only OS I'm able to test this on), `is_full_screen` is always false (it's a bug).
-         -- Calling `set_inner_size` when the window is actually in fullscreen will cause the
-         -- program UI to completely freeze.
-         if platform.is_win or dimensions.is_full_screen then
-            return
-         end
-         local new_width = dimensions.pixel_width + 50
-         local new_height = dimensions.pixel_height + 50
-         window:set_inner_size(new_width, new_height)
-      end)
-   },
    {
       key = 'Enter',
       mods = mod.SUPER_REV,
@@ -125,64 +115,18 @@ local keys = {
       end)
    },
 
-   -- background controls --
-   {
-      key = [[/]],
-      mods = mod.SUPER,
-      action = wezterm.action_callback(function(window, _pane)
-         backdrops:random(window)
-      end),
-   },
-   {
-      key = [[,]],
-      mods = mod.SUPER,
-      action = wezterm.action_callback(function(window, _pane)
-         backdrops:cycle_back(window)
-      end),
-   },
-   {
-      key = [[.]],
-      mods = mod.SUPER,
-      action = wezterm.action_callback(function(window, _pane)
-         backdrops:cycle_forward(window)
-      end),
-   },
-   {
-      key = [[/]],
-      mods = mod.SUPER_REV,
-      action = act.InputSelector({
-         title = 'InputSelector: Select Background',
-         choices = backdrops:choices(),
-         fuzzy = true,
-         fuzzy_description = 'Select Background: ',
-         action = wezterm.action_callback(function(window, _pane, idx)
-            if not idx then
-               return
-            end
-            ---@diagnostic disable-next-line: param-type-mismatch
-            backdrops:set_img(window, tonumber(idx))
-         end),
-      }),
-   },
-   {
-      key = 'b',
-      mods = mod.SUPER,
-      action = wezterm.action_callback(function(window, _pane)
-         backdrops:toggle_focus(window)
-      end)
-   },
 
    -- panes --
    -- panes: split panes
    {
       key = [[\]],
       mods = mod.SUPER,
-      action = act.SplitVertical({ domain = 'CurrentPaneDomain' }),
+      action = act.SplitHorizontal({ domain = 'CurrentPaneDomain' }),
    },
    {
       key = [[\]],
       mods = mod.SUPER_REV,
-      action = act.SplitHorizontal({ domain = 'CurrentPaneDomain' }),
+      action = act.SplitVertical({ domain = 'CurrentPaneDomain' }),
    },
 
    -- panes: zoom+close pane
@@ -214,7 +158,7 @@ local keys = {
       action = act.ActivateKeyTable({
          name = 'resize_font',
          one_shot = false,
-         timeout_milliseconds = 1000,
+         timeout_milliseconds = 3000,
       }),
    },
    -- resize panes
@@ -224,7 +168,33 @@ local keys = {
       action = act.ActivateKeyTable({
          name = 'resize_pane',
          one_shot = false,
-         timeout_milliseconds = 1000,
+         timeout_milliseconds = 3000,
+      }),
+   },
+   -- key help panel
+   {
+      key = 'F1',
+      mods = 'LEADER',
+      action = act.ShowLauncherArgs({ flags = 'FUZZY|KEY_ASSIGNMENTS' }),
+   },
+   -- window size
+   {
+      key = 'w',
+      mods = 'LEADER',
+      action = act.ActivateKeyTable({
+         name = 'resize_window',
+         one_shot = false,
+         timeout_milliseconds = 3000,
+      }),
+   },
+   -- background controls
+   {
+      key = 'b',
+      mods = 'LEADER',
+      action = act.ActivateKeyTable({
+         name = 'background',
+         one_shot = false,
+         timeout_milliseconds = 3000,
       }),
    },
 }
@@ -247,6 +217,78 @@ local key_tables = {
       { key = 'Escape', action = 'PopKeyTable' },
       { key = 'q',      action = 'PopKeyTable' },
    },
+   resize_window = {
+      {
+         key = '-',
+         action = wezterm.action_callback(function(window, _pane)
+            local dimensions = window:get_dimensions()
+            if platform.is_win or dimensions.is_full_screen then
+               return
+            end
+            local new_width = dimensions.pixel_width - 50
+            local new_height = dimensions.pixel_height - 50
+            window:set_inner_size(new_width, new_height)
+         end),
+      },
+      {
+         key = '=',
+         action = wezterm.action_callback(function(window, _pane)
+            local dimensions = window:get_dimensions()
+            if platform.is_win or dimensions.is_full_screen then
+               return
+            end
+            local new_width = dimensions.pixel_width + 50
+            local new_height = dimensions.pixel_height + 50
+            window:set_inner_size(new_width, new_height)
+         end),
+      },
+      { key = 'Escape', action = 'PopKeyTable' },
+      { key = 'q',      action = 'PopKeyTable' },
+   },
+   background = {
+      {
+         key = '/',
+         action = wezterm.action_callback(function(window, _pane)
+            backdrops:random(window)
+         end),
+      },
+      {
+         key = ',',
+         action = wezterm.action_callback(function(window, _pane)
+            backdrops:cycle_back(window)
+         end),
+      },
+      {
+         key = '.',
+         action = wezterm.action_callback(function(window, _pane)
+            backdrops:cycle_forward(window)
+         end),
+      },
+      {
+         key = 's',
+         action = act.InputSelector({
+            title = 'InputSelector: Select Background',
+            choices = backdrops:choices(),
+            fuzzy = true,
+            fuzzy_description = 'Select Background: ',
+            action = wezterm.action_callback(function(window, _pane, idx)
+               if not idx then
+                  return
+               end
+               ---@diagnostic disable-next-line: param-type-mismatch
+               backdrops:set_img(window, tonumber(idx))
+            end),
+         }),
+      },
+      {
+         key = 'b',
+         action = wezterm.action_callback(function(window, _pane)
+            backdrops:toggle_focus(window)
+         end),
+      },
+      { key = 'Escape', action = 'PopKeyTable' },
+      { key = 'q',      action = 'PopKeyTable' },
+   },
 }
 
 ---@type MouseBinding[]
@@ -263,7 +305,7 @@ local mouse_bindings = {
 return {
    disable_default_key_bindings = true,
    -- disable_default_mouse_bindings = true,
-   leader = { key = 'Space', mods = mod.SUPER_REV },
+   leader = { key = 'Space', mods = mod.SUPER_REV, timeout_milliseconds = 3000 },
    keys = keys,
    key_tables = key_tables,
    mouse_bindings = mouse_bindings,

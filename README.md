@@ -1,14 +1,14 @@
-<h2 align="center">My WezTerm Config</h2>
+<h2 align="center">w-wezterm-config</h2>
 
 <p align="center">
-  <a href="https://github.com/KevinSilvester/wezterm-config/stargazers">
-    <img alt="Stargazers" src="https://img.shields.io/github/stars/KevinSilvester/wezterm-config?style=for-the-badge&logo=starship&color=C9CBFF&logoColor=D9E0EE&labelColor=302D41">
+  <a href="https://github.com/devilkidd/w-wezterm-config/stargazers">
+    <img alt="Stargazers" src="https://img.shields.io/github/stars/devilkidd/w-wezterm-config?style=for-the-badge&logo=starship&color=C9CBFF&logoColor=D9E0EE&labelColor=302D41">
   </a>
-  <a href="https://github.com/KevinSilvester/wezterm-config/issues">
-    <img alt="Issues" src="https://img.shields.io/github/issues/KevinSilvester/wezterm-config?style=for-the-badge&logo=gitbook&color=B5E8E0&logoColor=D9E0EE&labelColor=302D41">
+  <a href="https://github.com/devilkidd/w-wezterm-config/issues">
+    <img alt="Issues" src="https://img.shields.io/github/issues/devilkidd/w-wezterm-config?style=for-the-badge&logo=gitbook&color=B5E8E0&logoColor=D9E0EE&labelColor=302D41">
   </a>
-  <a href="https://github.com/KevinSilvester/wezterm-config/actions/workflows/lint.yml">
-    <img alt="Build" src="https://img.shields.io/github/actions/workflow/status/KevinSilvester/wezterm-config/lint.yml?&style=for-the-badge&logo=githubactions&label=CI&color=A6E3A1&logoColor=D9E0EE&labelColor=302D41">
+  <a href="https://github.com/devilkidd/w-wezterm-config/actions/workflows/lint.yml">
+    <img alt="Build" src="https://img.shields.io/github/actions/workflow/status/devilkidd/w-wezterm-config/lint.yml?&style=for-the-badge&logo=githubactions&label=CI&color=A6E3A1&logoColor=D9E0EE&labelColor=302D41">
   </a>
 </p>
 
@@ -18,7 +18,7 @@
 
 ### Features
 
-- [**Background Image Selector**](https://github.com/KevinSilvester/wezterm-config/blob/master/utils/backdrops.lua)
+- [**Background Image Selector**](https://github.com/devilkidd/w-wezterm-config/blob/main/utils/backdrops.lua)
 
   - Cycle images
   - Fuzzy search for image
@@ -26,9 +26,9 @@
 
   > See: [key bindings](#background-images) for usage
 
-- [**GPU Adapter Selector**](https://github.com/KevinSilvester/wezterm-config/blob/master/utils/gpu_adapter.lua)
+- [**GPU Adapter Selector**](https://github.com/devilkidd/w-wezterm-config/blob/main/utils/gpu_adapter.lua)
 
-  > :bulb: Only works if the [`front_end`](https://github.com/KevinSilvester/wezterm-config/blob/master/config/appearance.lua#L8) option is set to `WebGpu`.
+  > :bulb: Only works if the [`front_end`](https://github.com/devilkidd/w-wezterm-config/blob/main/config/appearance.lua#L8) option is set to `WebGpu`.
 
   A small utility to select the best GPU + Adapter (graphics API) combo for your machine.
 
@@ -58,6 +58,14 @@
 ---
 
 ### Getting Started
+
+### Agent Quick Start
+
+1. Clone this repository.
+2. Read `README.md` and then inspect `wezterm.lua` plus `config/*` for platform-specific behavior.
+3. Apply only the platform branch needed for your OS.
+4. Keep `bindings.lua`, `launch.lua`, and `domains.lua` in sync with the README.
+5. Verify with `wezterm start --cwd .` or a normal launch after edits.
 
 - #### Requirements:
 
@@ -197,7 +205,7 @@
 
   1.  ```sh
       # On Windows and Unix systems
-      git clone https://github.com/KevinSilvester/wezterm-config.git ~/.config/wezterm
+      git clone https://github.com/devilkidd/w-wezterm-config.git ~/.config/wezterm
       ```
   2.  Update `launch` and `domain` related option:
       - [./config/launch.lua](./config/launch.lua) for preferred shells and its paths
@@ -314,8 +322,8 @@ Most of the key bindings revolve around a <kbd>SUPER</kbd> and <kbd>SUPER_REV</k
 
 | Keys                               | Action                                           |
 | ---------------------------------- | ------------------------------------------------ |
-| <kbd>SUPER</kbd>+<kbd>\\</kbd>     | `SplitVertical` <sub>(CurrentPaneDomain)</sub>   |
-| <kbd>SUPER_REV</kbd>+<kbd>\\</kbd> | `SplitHorizontal` <sub>(CurrentPaneDomain)</sub> |
+| <kbd>SUPER</kbd>+<kbd>\\</kbd>     | `SplitHorizontal` <sub>(CurrentPaneDomain)</sub> |
+| <kbd>SUPER_REV</kbd>+<kbd>\\</kbd> | `SplitVertical` <sub>(CurrentPaneDomain)</sub>   |
 
 ##### Panes: Zoom+Close Pane
 
@@ -365,6 +373,8 @@ Most of the key bindings revolve around a <kbd>SUPER</kbd> and <kbd>SUPER_REV</k
 | ------------------------------ | ------------- |
 | <kbd>LEADER</kbd>+<kbd>f</kbd> | `resize_font` |
 | <kbd>LEADER</kbd>+<kbd>p</kbd> | `resize_pane` |
+| <kbd>LEADER</kbd>+<kbd>w</kbd> | `resize_window` |
+| <kbd>LEADER</kbd>+<kbd>b</kbd> | `background`   |
 
 ##### Key Table: `resize_font`
 
@@ -386,6 +396,27 @@ Most of the key bindings revolve around a <kbd>SUPER</kbd> and <kbd>SUPER_REV</k
 | <kbd>l</kbd>   | `AdjustPaneSize` <sub>(Direction: Right)</sub> |
 | <kbd>q</kbd>   | `PopKeyTable` <sub>(exit)</sub>                |
 | <kbd>Esc</kbd> | `PopKeyTable` <sub>(exit)</sub>                |
+
+##### Key Table: `resize_window`
+
+| Keys           | Action                                      |
+| -------------- | ------------------------------------------- |
+| <kbd>-</kbd>   | Decrease Window Size                        |
+| <kbd>=</kbd>   | Increase Window Size                        |
+| <kbd>q</kbd>   | `PopKeyTable` <sub>(exit)</sub>             |
+| <kbd>Esc</kbd> | `PopKeyTable` <sub>(exit)</sub>             |
+
+##### Key Table: `background`
+
+| Keys           | Action                                      |
+| -------------- | ------------------------------------------- |
+| <kbd>/</kbd>   | Select Random Image                         |
+| <kbd>,</kbd>   | Cycle to next Image                         |
+| <kbd>.</kbd>   | Cycle to previous Image                     |
+| <kbd>s</kbd>   | Fuzzy select Image                          |
+| <kbd>b</kbd>   | Toggle background focus mode                |
+| <kbd>q</kbd>   | `PopKeyTable` <sub>(exit)</sub>             |
+| <kbd>Esc</kbd> | `PopKeyTable` <sub>(exit)</sub>             |
 
 ---
 

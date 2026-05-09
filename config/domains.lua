@@ -13,10 +13,14 @@ local options = {
 }
 
 if platform.is_win then
+   local wsl_user = os.getenv('WEZTERM_WSL_USER') or 'kevin'
+   local wsl_distro = os.getenv('WEZTERM_WSL_DISTRO') or 'Ubuntu'
+   local wsl_home = '/home/' .. wsl_user
+
    options.ssh_domains = {
       {
          name = 'ssh:wsl',
-         username = 'kevin',
+         username = wsl_user,
          remote_address = 'localhost',
          multiplexing = 'None',
          default_prog = { 'fish', '-l' },
@@ -27,16 +31,16 @@ if platform.is_win then
    options.wsl_domains = {
       {
          name = 'wsl:ubuntu-fish',
-         distribution = 'Ubuntu',
-         username = 'kevin',
-         default_cwd = '/home/kevin',
+         distribution = wsl_distro,
+         username = wsl_user,
+         default_cwd = wsl_home,
          default_prog = { 'fish', '-l' },
       },
       {
          name = 'wsl:ubuntu-bash',
-         distribution = 'Ubuntu',
-         username = 'kevin',
-         default_cwd = '/home/kevin',
+         distribution = wsl_distro,
+         username = wsl_user,
+         default_cwd = wsl_home,
          default_prog = { 'bash', '-l' },
       },
    }

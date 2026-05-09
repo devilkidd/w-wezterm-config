@@ -25,15 +25,31 @@ cells
    :add_segment(3, ' ', colors.default, attr(attr.intensity('Bold')))
    :add_segment(4, GLYPH_SEMI_CIRCLE_RIGHT, colors.scircle, attr(attr.intensity('Bold')))
 
+---@type table<string, string>
+local key_table_labels = {
+   resize_font = 'FONT RESIZE',
+   resize_pane = 'PANE RESIZE',
+   resize_window = 'WINDOW RESIZE',
+   background = 'BACKGROUND',
+}
+
+---@type table<string, string>
+local key_table_hints = {
+   resize_window = ' [- shrink] [= grow] [q/esc exit]',
+   background = ' [/] [,] [.] [s select] [b toggle] [q/esc exit]',
+}
+
 M.setup = function()
    wezterm.on('update-status', function(window, _pane)
       local name = window:active_key_table()
       local res = {}
 
       if name then
+         local label = key_table_labels[name] or string.upper(name)
+         local hint = key_table_hints[name] or ''
          cells
             :update_segment_text(2, GLYPH_KEY_TABLE)
-            :update_segment_text(3, ' ' .. string.upper(name))
+            :update_segment_text(3, ' ' .. label .. hint)
          res = cells:render_all()
       end
 
