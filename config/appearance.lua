@@ -44,8 +44,8 @@ return {
 
    -- window
    window_padding = {
-      left = 0,
-      right = 0,
+      left = 2,
+      right = 2,
       top = 10,
       bottom = 7.5,
    },
@@ -56,14 +56,14 @@ return {
       -- font = fonts.font,
       -- font_size = fonts.font_size,
    },
-   -- inactive_pane_hsb = {
-   --    saturation = 0.9,
-   --    brightness = 0.65,
-   -- },
    inactive_pane_hsb = {
-      saturation = 1,
-      brightness = 1,
+      saturation = 0.9,
+      brightness = 0.65,
    },
+   -- inactive_pane_hsb = {
+   --    saturation = 1,
+   --    brightness = 1,
+   -- },
 
    visual_bell = {
       fade_in_function = 'EaseIn',

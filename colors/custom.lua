@@ -27,6 +27,22 @@ local mocha = {
    base      = '#1f1f28',
    mantle    = '#181825',
    crust     = '#11111b',
+   -- 1. 最推荐：冷灰蓝，干净、不抢戏
+   custom1   = '#3b4252',
+   -- 2. 更暗一点：几乎隐形，只做轻微分隔
+   custom2   = '#2e3440',
+      -- 3. 带一点赛博紫：更有主题感
+   custom3   = '#5b4b8a',
+   -- 4. 青蓝微光：科技感更强，但别太亮
+   custom4   = '#4c7899',
+   -- 5. 暖灰：适合不想太冷的界面
+   custom5   = '#4a4a58',
+   -- 6. 百搭蓝灰，最稳
+   custom6   = '#4b5568',
+   -- 7. 雾紫灰，有一点点高级感
+   custom7   = '#5b526f',
+   -- 8. 青灰蓝，科技感稍强
+   custom8   = '#4f6f7a',
 }
 
 local colorscheme = {
@@ -87,7 +103,7 @@ local colorscheme = {
       [17] = mocha.rosewater,
    },
    scrollbar_thumb = mocha.surface2,
-   split = mocha.overlay1,
+   split = mocha.custom7,
    compose_cursor = mocha.flamingo,
 }
 
